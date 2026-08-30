@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Keg-Scale</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <!-- ---------------------------------
+             RUBRIK
+        ---------------------------------- -->
+
+        <h1>🍺 Keg-Scale</h1>
+
+
+        <!-- ---------------------------------
+             STATUS
+        ---------------------------------- -->
+
+        <div id="status" class="status">
+            Väntar på data...
+        </div>
+
+
+        <!-- ---------------------------------
+             VÄRDEN
+        ---------------------------------- -->
+
+        <div class="cards">
+
+            <div class="card">
+
+                <div class="label">
+                    Total vikt
+                </div>
+
+                <div id="weight" class="value">
+                    --
+                </div>
+
+                <div class="unit">
+                    kg
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    Öl kvar
+                </div>
+
+                <div id="liters" class="value">
+                    --
+                </div>
+
+                <div class="unit">
+                    liter
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    Fyllnadsgrad
+                </div>
+
+                <div id="percent" class="value">
+                    --
+                </div>
+
+                <div class="unit">
+                    %
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ---------------------------------
+             NIVÅINDIKATOR
+        ---------------------------------- -->
+
+        <div class="level-container">
+
+            <div class="level-title">
+                Fatnivå
+            </div>
+
+            <div class="level-background">
+
+                <div id="level-bar"
+                     class="level-bar">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ---------------------------------
+             TARERING
+        ---------------------------------- -->
+
+        <div class="tare-container">
+
+            <div class="level-title">
+                Vågen
+            </div>
+
+            <button id="tare-button"
+                    type="button">
+                Nollställ våg
+            </button>
+
+            <div id="tare-message">
+            </div>
+
+        </div>
+
+
+        <!-- ---------------------------------
+             TIDSTÄMPEL
+        ---------------------------------- -->
+
+        <div id="timestamp"
+             class="timestamp">
+            --
+        </div>
+
+    </div>
+
+
+    <!-- ---------------------------------
+         JAVASCRIPT
+    ---------------------------------- -->
+
+    <script src="{{ url_for('static', filename='script.js') }}">
+    </script>
+
+</body>
+
+</html>

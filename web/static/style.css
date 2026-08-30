@@ -1,0 +1,293 @@
+/* =================================================
+   KEG-SCALE
+   ================================================= */
+
+
+/* -------------------------------------------------
+   GRUNDSIDA
+   ------------------------------------------------- */
+
+body {
+    font-family: Arial, sans-serif;
+
+    background: #f2f2f2;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+/* -------------------------------------------------
+   HUVUDCONTAINER
+   ------------------------------------------------- */
+
+.container {
+    max-width: 800px;
+
+    margin: 50px auto;
+
+    padding: 20px;
+
+    text-align: center;
+}
+
+
+/* -------------------------------------------------
+   RUBRIK
+   ------------------------------------------------- */
+
+h1 {
+    font-size: 42px;
+
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+
+/* -------------------------------------------------
+   STATUS
+   ------------------------------------------------- */
+
+.status {
+    font-size: 18px;
+
+    margin-bottom: 30px;
+}
+
+
+.status.online {
+    color: green;
+}
+
+
+.status.offline {
+    color: red;
+}
+
+
+/* -------------------------------------------------
+   KORT - VIKT / LITER / PROCENT
+   ------------------------------------------------- */
+
+.cards {
+    display: flex;
+
+    gap: 20px;
+
+    justify-content: center;
+}
+
+
+.card {
+    flex: 1;
+
+    background: white;
+
+    padding: 30px 15px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+.label {
+    font-size: 18px;
+
+    margin-bottom: 15px;
+}
+
+
+.value {
+    font-size: 46px;
+
+    font-weight: bold;
+}
+
+
+.unit {
+    font-size: 18px;
+
+    margin-top: 5px;
+
+    color: #666;
+}
+
+
+/* -------------------------------------------------
+   NIVÅINDIKATOR
+   ------------------------------------------------- */
+
+.level-container {
+    background: white;
+
+    margin-top: 30px;
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+.level-title {
+    font-size: 20px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+}
+
+
+.level-background {
+    width: 100%;
+
+    height: 35px;
+
+    background: #ddd;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+
+.level-bar {
+    width: 0%;
+
+    height: 100%;
+
+    background: #e5a000;
+
+    border-radius: 20px;
+
+    transition: width 0.5s ease;
+}
+
+
+/* -------------------------------------------------
+   TARERING
+   ------------------------------------------------- */
+
+.tare-container {
+    background: white;
+
+    margin-top: 30px;
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+#tare-button {
+    padding: 12px 25px;
+
+    font-size: 18px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    background: #e5a000;
+
+    color: black;
+}
+
+
+#tare-button:hover {
+    opacity: 0.85;
+}
+
+
+#tare-button:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+#tare-message {
+    margin-top: 12px;
+
+    min-height: 20px;
+
+    font-size: 14px;
+
+    color: #666;
+}
+
+
+/* -------------------------------------------------
+   TIDSTÄMPEL
+   ------------------------------------------------- */
+
+.timestamp {
+    margin-top: 25px;
+
+    margin-bottom: 20px;
+
+    font-size: 14px;
+
+    color: #777;
+}
+
+
+/* -------------------------------------------------
+   MOBIL / SMÅ SKÄRMAR
+   ------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .container {
+        margin: 20px auto;
+
+        padding: 15px;
+    }
+
+
+    h1 {
+        font-size: 34px;
+    }
+
+
+    .cards {
+        flex-direction: column;
+    }
+
+
+    .card {
+        padding: 20px 15px;
+    }
+
+
+    .value {
+        font-size: 40px;
+    }
+
+
+    .level-container {
+        padding: 20px;
+    }
+
+
+    .tare-container {
+        padding: 20px;
+    }
+
+
+    #tare-button {
+        width: 100%;
+    }
+}

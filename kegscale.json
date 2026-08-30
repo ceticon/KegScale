@@ -1,0 +1,11 @@
+{
+    "weight_g": 0.0,
+    "weight_kg": 0.0,
+    "beer_weight_kg": 0.0,
+    "beer_liters": 0.0,
+    "fill_percent": 0.0,
+    "keg_tare_kg": 4.5,
+    "keg_capacity_l": 19.0,
+    "beer_density_kg_per_l": 1.01,
+    "timestamp": "2026-08-30 13:34:06"
+}
