@@ -89,39 +89,104 @@ async function updateKegScale() {
 
 
 // -------------------------------------------------
-// NOLLSTÄLL VÅGEN
+// HÄMTA ÖLNAMN
 // -------------------------------------------------
 
-async function tareScale() {
-    const button = document.getElementById("tare-button");
-    const message = document.getElementById("tare-message");
-
-    button.disabled = true;
-    message.textContent = "Nollställer vågen...";
-
+async function loadBeerName() {
     try {
-        const response = await fetch("/api/tare", {
-            method: "POST"
-        });
-
+        const response = await fetch("/api/beer-name");
         const data = await response.json();
 
+        const beerNameInput =
+            document.getElementById("beer-name");
+
+        if (!beerNameInput) {
+            return;
+        }
+
         if (data.success) {
-            message.textContent = "Tarering begärd...";
+            beerNameInput.value = data.beer_name;
         }
         else {
-            message.textContent = "Tareringen misslyckades.";
+            console.error(
+                "Kunde inte läsa ölnamn:",
+                data.error
+            );
         }
     }
 
     catch (error) {
-        console.error("Fel vid tarering:", error);
+        console.error(
+            "Fel vid hämtning av ölnamn:",
+            error
+        );
+    }
+}
+
+
+// -------------------------------------------------
+// SPARA ÖLNAMN
+// -------------------------------------------------
+
+async function saveBeerName() {
+    const input =
+        document.getElementById("beer-name");
+
+    const button =
+        document.getElementById("beer-name-button");
+
+    const message =
+        document.getElementById("beer-name-message");
+
+    const beerName = input.value.trim();
+
+    if (beerName === "") {
+        message.textContent =
+            "Ölnamnet får inte vara tomt.";
+        return;
+    }
+
+    button.disabled = true;
+    message.textContent = "Sparar...";
+
+    try {
+        const response = await fetch(
+            "/api/beer-name",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    beer_name: beerName
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+            message.textContent =
+                "Ölnamnet sparades.";
+        }
+        else {
+            message.textContent =
+                "Kunde inte spara ölnamnet.";
+        }
+    }
+
+    catch (error) {
+        console.error(
+            "Fel vid sparning av ölnamn:",
+            error
+        );
 
         message.textContent =
             "Ingen kontakt med servern.";
     }
 
-    // Aktivera knappen igen efter 3 sekunder
     setTimeout(function () {
         button.disabled = false;
         message.textContent = "";
@@ -130,28 +195,130 @@ async function tareScale() {
 
 
 // -------------------------------------------------
-// START NÄR HTML-SIDAN ÄR FÄRDIGLADDAD
+// NOLLSTÄLL VÅGEN
 // -------------------------------------------------
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    // Koppla Nollställ-knappen
-    const tareButton =
+async function tareScale() {
+    const button =
         document.getElementById("tare-button");
 
-    if (tareButton) {
-        tareButton.addEventListener(
-            "click",
-            tareScale
+    const message =
+        document.getElementById("tare-message");
+
+    button.disabled = true;
+    message.textContent =
+        "Nollställer vågen...";
+
+    try {
+        const response = await fetch(
+            "/api/tare",
+            {
+                method: "POST"
+            }
         );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+            message.textContent =
+                "Tarering begärd...";
+        }
+        else {
+            message.textContent =
+                "Tareringen misslyckades.";
+        }
     }
 
-    // Läs vikt direkt
-    updateKegScale();
+    catch (error) {
+        console.error(
+            "Fel vid tarering:",
+            error
+        );
 
-    // Uppdatera därefter varje sekund
-    setInterval(
-        updateKegScale,
-        1000
-    );
-});
+        message.textContent =
+            "Ingen kontakt med servern.";
+    }
+
+    setTimeout(function () {
+        button.disabled = false;
+        message.textContent = "";
+    }, 3000);
+}
+
+
+// -------------------------------------------------
+// START NÄR SIDAN ÄR FÄRDIGLADDAD
+// -------------------------------------------------
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        // -----------------------------------------
+        // ÖLNAMN
+        // -----------------------------------------
+
+        const beerNameButton =
+            document.getElementById(
+                "beer-name-button"
+            );
+
+        if (beerNameButton) {
+            beerNameButton.addEventListener(
+                "click",
+                saveBeerName
+            );
+        }
+
+
+        // Spara även med Enter
+        const beerNameInput =
+            document.getElementById(
+                "beer-name"
+            );
+
+        if (beerNameInput) {
+            beerNameInput.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (event.key === "Enter") {
+                        saveBeerName();
+                    }
+                }
+            );
+        }
+
+
+        // -----------------------------------------
+        // TARERING
+        // -----------------------------------------
+
+        const tareButton =
+            document.getElementById(
+                "tare-button"
+            );
+
+        if (tareButton) {
+            tareButton.addEventListener(
+                "click",
+                tareScale
+            );
+        }
+
+
+        // -----------------------------------------
+        // STARTA DATAUPPDATERING
+        // -----------------------------------------
+
+        loadBeerName();
+
+        updateKegScale();
+
+        setInterval(
+            updateKegScale,
+            1000
+        );
+    }
+);

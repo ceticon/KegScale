@@ -1,127 +1,147 @@
 # 🍺 KegScale
 
-KegScale är en Raspberry Pi-baserad våg för att mäta hur mycket öl som finns kvar i ett Corneliusfat.
+**KegScale** är en Raspberry Pi-baserad våg för att mäta hur mycket öl som finns kvar i ett Corneliusfat.
 
-Systemet använder fyra lastceller tillsammans med en HX711 och en Raspberry Pi. Vikten läses av i Python och presenteras i ett webbaserat gränssnitt med Flask.
+Systemet använder fyra lastceller tillsammans med en HX711 och en Raspberry Pi 5. Vikten läses av kontinuerligt och presenteras i ett webbaserat gränssnitt byggt med Flask.
 
-Webbsidan visar:
+Webbgränssnittet visar aktuell vikt, mängden öl i liter och fatets fyllnadsgrad. Ölets namn kan ändras direkt från webbsidan och vågen kan även nollställas därifrån.
 
+---
+
+## 🖥️ Web interface
+
+![KegScale web interface](docs/images/kegscale_webpage.png)
+
+Webbsidan uppdateras automatiskt och visar:
+
+- Ölets namn
 - Total vikt
-- Beräknad mängd öl i liter
+- Mängd öl kvar i liter
 - Fyllnadsgrad i procent
 - Grafisk nivåindikator
 - Online/offline-status
-- Senaste mättid
-- Webbaserad nollställning av vågen
+- Tidpunkt för senaste mätningen
+- Nollställning av vågen
 
+Ölets namn kan ändras direkt från webbgränssnittet när ett nytt fat ansluts.
 
-## Hardware
+Exempel:
 
-Projektet använder:
+```text
+Munich Helles
+```
+
+Namnet sparas i `config.json` och finns därför kvar efter omstart.
+
+---
+
+## 🔧 Hardware
+
+KegScale använder:
 
 - Raspberry Pi 5
 - HX711 load cell amplifier
-- 4 × 50 kg load cells
-- Lastcellerna kopplade som en Wheatstone-brygga
-- Nätverksanslutning för webbgränssnittet
+- 4 × 50 kg lastceller
+- Kopplingskort för lastcellerna
+- 19 liters Corneliusfat
 
-HX711 är ansluten till Raspberry Pi med:
+Fyra 50 kg lastceller ger en nominell total kapacitet på cirka **200 kg**.
+
+### HX711
+
+![HX711](docs/images/hx711.jpg)
+
+HX711 förstärker den mycket svaga signalen från lastcellerna och omvandlar den till ett digitalt 24-bitars mätvärde som Raspberry Pi kan läsa.
+
+### Anslutning till Raspberry Pi
 
 | HX711 | Raspberry Pi |
-|------|---------------|
+|---|---|
 | DT / DATA | GPIO 6 |
 | SCK / CLOCK | GPIO 5 |
 | GND | GND |
 | VCC | Matning |
 
-Kopplingsschema och Fritzing-filer finns i katalogen:
+Programmet använder BCM-numrering:
+
+```python
+DATA_PIN = 6
+CLOCK_PIN = 5
+```
+
+### Kopplingsschema
+
+Fritzing-projekt och kopplingsschema finns i:
 
 ```text
 hardware/
+├── KegScale_bb.pdf
+└── KegScale.fzz
 ```
 
+`KegScale.fzz` kan öppnas och redigeras i Fritzing.
 
-## Project structure
+`KegScale_bb.pdf` innehåller kopplingsschemat i PDF-format.
 
-```text
-KegScale/
-├── kegscale.py
-├── kegscale.json
-├── config.json
-├── control.json
-├── debug_vikt.py
-├── requirements.txt
-│
-├── hardware/
-│   ├── ...
-│
-└── web/
-    ├── app.py
-    │
-    ├── templates/
-    │   └── index.html
-    │
-    └── static/
-        ├── script.js
-        └── style.css
-```
+---
 
+## ⚖️ Så fungerar vågen
 
-## How it works
-
-Systemet är uppdelat i två delar.
-
-### KegScale
-
-`kegscale.py` kommunicerar direkt med HX711 och lastcellerna.
-
-Programmet:
-
-1. Återställer HX711
-2. Nollställer vågen vid start
-3. Läser 30 mätvärden
-4. Sorterar mätvärdena
-5. Tar bort de 5 högsta och 5 lägsta
-6. Beräknar medelvärdet av resterande 20 mätningar
-7. Omvandlar råvärdet till gram
-8. Beräknar mängden öl
-9. Skriver resultatet till `kegscale.json`
-
-
-### Web interface
-
-Flask-servern finns i:
+Kommunikationen mellan hårdvara och webbgränssnitt ser ut så här:
 
 ```text
-web/app.py
-```
-
-Flask läser `kegscale.json` och skickar informationen till webbläsaren.
-
-JavaScript uppdaterar sidan automatiskt varje sekund.
-
-Kommunikationen ser ut så här:
-
-```text
-Load cells
-    ↓
-HX711
-    ↓
+4 × Load cells
+       │
+       ▼
+     HX711
+       │
+       ▼
 Raspberry Pi GPIO
-    ↓
-kegscale.py
-    ↓
-kegscale.json
-    ↓
-Flask
-    ↓
-JavaScript
-    ↓
-Web browser
+       │
+       ▼
+  kegscale.py
+       │
+       ▼
+ kegscale.json
+       │
+       ▼
+     Flask
+       │
+       ▼
+   JavaScript
+       │
+       ▼
+  Web browser
 ```
 
+`kegscale.py` är den enda processen som kommunicerar direkt med GPIO och HX711.
 
-## Calibration
+Flask behöver därför aldrig komma åt hårdvaran utan läser endast den information som `kegscale.py` skriver till JSON-filer.
+
+---
+
+## 📏 Mätning och filtrering
+
+För varje viktmätning:
+
+1. 30 mätvärden läses från HX711.
+2. Mätvärdena sorteras.
+3. De 5 lägsta värdena tas bort.
+4. De 5 högsta värdena tas bort.
+5. Medelvärdet av resterande 20 mätningar beräknas.
+
+Detta ger en stabilare vikt och minskar påverkan från enstaka störningar.
+
+Små variationer runt noll filtreras också bort:
+
+```python
+if abs(vikt_gram) < 5:
+    vikt_gram = 0.0
+```
+
+---
+
+## 🎯 Kalibrering
 
 Nuvarande kalibreringsfaktor:
 
@@ -129,20 +149,25 @@ Nuvarande kalibreringsfaktor:
 KALIBRERINGS_FAKTOR = 21.04
 ```
 
-Vågen har kalibrerats med en känd vikt på cirka 3910 gram.
+Vågen har kalibrerats med en känd vikt på cirka **3910 gram**.
 
-Last på vågen gör HX711-råvärdet mer negativt, därför används:
+Eftersom belastning gör HX711-råvärdet mer negativt beräknas vikten med:
 
 ```python
 vikt_gram = -differens / KALIBRERINGS_FAKTOR
 ```
 
-Mätningen filtreras genom att läsa 30 värden och ta bort de 5 högsta och 5 lägsta innan medelvärdet beräknas.
+En separat fil finns för felsökning och kalibrering:
 
+```text
+debug_vikt.py
+```
 
-## Keg configuration
+---
 
-Fatets egenskaper lagras i:
+## 🍺 Fat och öl
+
+Grundinställningarna finns i:
 
 ```text
 config.json
@@ -152,49 +177,66 @@ Exempel för ett 19-liters Corneliusfat:
 
 ```json
 {
+    "beer_name": "Munich Helles",
     "keg_tare_kg": 4.5,
     "keg_capacity_l": 19.0,
     "beer_density_kg_per_l": 1.01
 }
 ```
 
-### keg_tare_kg
+### `beer_name`
+
+Namnet på ölet som finns i fatet.
+
+Namnet kan ändras direkt från webbgränssnittet.
+
+### `keg_tare_kg`
 
 Vikten på det tomma fatet.
 
-### keg_capacity_l
+Den verkliga tomvikten bör mätas för det Corneliusfat som används.
 
-Fatets kapacitet i liter.
+### `keg_capacity_l`
 
-### beer_density_kg_per_l
+Fatets nominella volym i liter.
 
-Ungefärlig densitet för ölet i kg/liter.
+### `beer_density_kg_per_l`
 
+Ölets ungefärliga densitet i kg/liter.
 
-## Calculating beer volume
+---
 
-Ölets vikt beräknas från:
+## 🧮 Beräkning av mängden öl
 
-```text
-Ölvikt = Total vikt - Fatets tomvikt
-```
-
-Volymen beräknas sedan från:
+Först beräknas ölets vikt:
 
 ```text
-Liter öl = Ölvikt / Ölets densitet
+Ölets vikt = Total vikt - Fatets tomvikt
 ```
 
-Fyllnadsgraden beräknas från:
+Därefter beräknas volymen:
+
+```text
+Liter öl = Ölets vikt / Ölets densitet
+```
+
+Fyllnadsgraden blir:
 
 ```text
 Fyllnadsgrad = Liter öl / Fatets kapacitet × 100
 ```
 
+Resultatet begränsas till intervallet:
 
-## JSON data
+```text
+0 – 100 %
+```
 
-`kegscale.py` skriver aktuell information till:
+---
+
+## 📄 JSON data
+
+`kegscale.py` skriver kontinuerligt aktuell information till:
 
 ```text
 kegscale.json
@@ -204,6 +246,7 @@ Exempel:
 
 ```json
 {
+    "beer_name": "Munich Helles",
     "weight_g": 13945.1,
     "weight_kg": 13.945,
     "beer_weight_kg": 9.445,
@@ -212,22 +255,27 @@ Exempel:
     "keg_tare_kg": 4.5,
     "keg_capacity_l": 19.0,
     "beer_density_kg_per_l": 1.01,
-    "timestamp": "2026-08-30 13:20:00"
+    "timestamp": "2026-08-30 18:45:00"
 }
 ```
 
+---
 
-## Web tare
+## 🔄 Nollställning från webben
 
-Vågen kan nollställas direkt från webbgränssnittet.
-
-När användaren klickar på:
+Vågen kan nollställas direkt från webbgränssnittet med knappen:
 
 ```text
 Nollställ våg
 ```
 
-skickar Flask ett kommando genom:
+Webbläsaren skickar då:
+
+```text
+POST /api/tare
+```
+
+Flask skriver kommandot till:
 
 ```text
 control.json
@@ -241,28 +289,87 @@ Exempel:
 }
 ```
 
-`kegscale.py` upptäcker kommandot, gör en ny tarering och återställer sedan kommandot.
-
-Det innebär att Flask aldrig behöver kommunicera direkt med GPIO eller HX711.
-
-Kommunikationen är:
+`kegscale.py` upptäcker kommandot, utför tareringen och återställer därefter kommandot.
 
 ```text
 Web browser
-    ↓
+     │
+     ▼
 POST /api/tare
-    ↓
-Flask
-    ↓
-control.json
-    ↓
-kegscale.py
-    ↓
-HX711 tare
+     │
+     ▼
+    Flask
+     │
+     ▼
+ control.json
+     │
+     ▼
+ kegscale.py
+     │
+     ▼
+    HX711
 ```
 
+---
 
-## Python environment
+## ✏️ Ändra ölnamn från webben
+
+Ölnamnet kan läsas och ändras via Flask API:
+
+```text
+GET  /api/beer-name
+POST /api/beer-name
+```
+
+När exempelvis:
+
+```text
+Munich Helles
+```
+
+ändras till:
+
+```text
+Czech Pilsner
+```
+
+sparar Flask det nya namnet i `config.json`.
+
+Övriga inställningar i konfigurationsfilen påverkas inte.
+
+---
+
+## 📁 Projektstruktur
+
+```text
+KegScale/
+├── config.json
+├── debug_vikt.py
+├── docs/
+│   └── images/
+│       ├── hx711.jpg
+│       └── kegscale_webpage.png
+├── hardware/
+│   ├── KegScale_bb.pdf
+│   └── KegScale.fzz
+├── kegscale.py
+├── README.md
+├── requirements.txt
+├── test_vikt_pi5.py
+└── web/
+    ├── app.py
+    ├── static/
+    │   ├── script.js
+    │   └── style.css
+    └── templates/
+        └── index.html
+```
+
+Runtime-filer som exempelvis `kegscale.json` och `control.json` kan exkluderas från Git med `.gitignore`.
+
+---
+
+## 🐍 Python environment
 
 Skapa en virtuell Python-miljö:
 
@@ -282,12 +389,16 @@ Installera beroenden:
 pip install -r requirements.txt
 ```
 
+---
 
-## Running KegScale
+## 🚀 Starta KegScale
 
-KegScale och webbservern körs som två separata processer.
+KegScale består av två separata processer:
 
-### Terminal 1 – Scale
+1. Vågen
+2. Flask-webbservern
+
+### Terminal 1 – KegScale
 
 ```bash
 cd ~/Projects/KegScale
@@ -296,7 +407,6 @@ source myenv/bin/activate
 
 python kegscale.py
 ```
-
 
 ### Terminal 2 – Web server
 
@@ -316,25 +426,32 @@ Flask-servern körs på port:
 5000
 ```
 
-Webbgränssnittet kan sedan öppnas från en dator eller mobil på samma nätverk:
+Webbgränssnittet öppnas från en dator, surfplatta eller mobil på samma nätverk:
 
 ```text
 http://<raspberry-pi-ip>:5000
 ```
 
+---
 
-## Web API
+## 🌐 API
 
-### Read scale
+### Läs vågen
 
 ```text
 GET /api/weight
 ```
 
-Returnerar aktuell vikt, ölvolym, fyllnadsgrad och status.
+Returnerar bland annat:
 
+- Ölnamn
+- Vikt
+- Liter öl
+- Fyllnadsgrad
+- Tidstämpel
+- Online/offline-status
 
-### Tare scale
+### Nollställ vågen
 
 ```text
 POST /api/tare
@@ -342,14 +459,35 @@ POST /api/tare
 
 Begär att `kegscale.py` nollställer vågen.
 
+### Läs ölnamn
 
-## Current features
+```text
+GET /api/beer-name
+```
 
+### Ändra ölnamn
+
+```text
+POST /api/beer-name
+```
+
+Exempel:
+
+```json
+{
+    "beer_name": "Munich Helles"
+}
+```
+
+---
+
+## ✅ Current features
+
+- [x] Raspberry Pi 5
 - [x] HX711 communication
-- [x] Four load cells
+- [x] 4 × 50 kg load cells
 - [x] Digital filtering
 - [x] Scale calibration
-- [x] Automatic tare at startup
 - [x] Weight in grams and kilograms
 - [x] Beer volume calculation
 - [x] Keg fill percentage
@@ -359,28 +497,30 @@ Begär att `kegscale.py` nollställer vågen.
 - [x] Online/offline detection
 - [x] Graphical keg level
 - [x] Web-based scale tare
+- [x] Beer name stored in configuration
+- [x] Beer name editable from web interface
 
+---
 
-## Planned features
+## 🔮 Planned features
 
-Possible future improvements:
-
-- [ ] Set empty keg weight from the web interface
-- [ ] Change keg capacity from the web interface
+- [ ] Set empty keg weight from web interface
+- [ ] Change keg capacity from web interface
 - [ ] Configuration page
-- [ ] Support for different keg sizes
-- [ ] Save tare/offset between restarts
-- [ ] Start KegScale automatically at Raspberry Pi boot
-- [ ] Start Flask automatically at Raspberry Pi boot
-- [ ] Improved web interface
+- [ ] Support different keg sizes
+- [ ] Save scale offset between restarts
+- [ ] Automatic startup with systemd
 - [ ] Historical consumption data
 - [ ] Multiple keg support
 
+---
 
-## Status
+## 📌 Status
 
-The basic KegScale system is working.
+KegScale är nu fullt fungerande som grundsystem.
 
-The scale has been calibrated and tested, JSON communication is working, and the Flask web interface displays live weight, calculated beer volume and keg fill percentage.
+Vågen är kalibrerad och testad, Raspberry Pi läser HX711 och Flask-webbgränssnittet visar aktuell vikt, mängden öl och fatets fyllnadsgrad.
 
-Web-based tare is also implemented.
+Vågen kan nollställas från webbsidan och namnet på ölet i fatet kan ändras och sparas direkt från webbgränssnittet.
+
+🍺 **Current keg: Munich Helles**

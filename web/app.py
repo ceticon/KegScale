@@ -1,12 +1,7 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import json
 import os
 from datetime import datetime
-
-
-# -------------------------------------------------
-# FLASK
-# -------------------------------------------------
 
 app = Flask(__name__)
 
@@ -14,12 +9,6 @@ app = Flask(__name__)
 # -------------------------------------------------
 # SÖKVÄGAR
 # -------------------------------------------------
-
-# app.py ligger i:
-# KegScale/web/app.py
-#
-# BASE_DIR blir därför:
-# KegScale/
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(
@@ -30,6 +19,11 @@ BASE_DIR = os.path.dirname(
 JSON_FILE = os.path.join(
     BASE_DIR,
     "kegscale.json"
+)
+
+CONFIG_FILE = os.path.join(
+    BASE_DIR,
+    "config.json"
 )
 
 CONTROL_FILE = os.path.join(
@@ -44,14 +38,11 @@ CONTROL_FILE = os.path.join(
 
 @app.route("/")
 def index():
-
-    return render_template(
-        "index.html"
-    )
+    return render_template("index.html")
 
 
 # -------------------------------------------------
-# API - LÄS KEGSCALE
+# LÄS VIKT / KEG-SCALE DATA
 # -------------------------------------------------
 
 @app.route("/api/weight")
@@ -63,24 +54,21 @@ def api_weight():
             data = json.load(f)
 
 
-        # -----------------------------------------
-        # Kontrollera hur gammal mätningen är
-        # -----------------------------------------
-
         timestamp = datetime.strptime(
             data["timestamp"],
             "%Y-%m-%d %H:%M:%S"
         )
 
+
         age = (
-            datetime.now() - timestamp
+            datetime.now()
+            - timestamp
         ).total_seconds()
 
 
-        # Om data är yngre än 5 sekunder
-        # betraktar vi KegScale som online.
-
-        data["online"] = age < 5
+        data["online"] = (
+            age < 5
+        )
 
         data["age_seconds"] = round(
             age,
@@ -100,7 +88,7 @@ def api_weight():
 
 
 # -------------------------------------------------
-# API - NOLLSTÄLL VÅG
+# TARERA VÅGEN
 # -------------------------------------------------
 
 @app.route(
@@ -115,10 +103,6 @@ def api_tare():
             "tare": True
         }
 
-
-        # -----------------------------------------
-        # Skriv kommando till control.json
-        # -----------------------------------------
 
         with open(
             CONTROL_FILE,
@@ -147,8 +131,139 @@ def api_tare():
 
 
 # -------------------------------------------------
-# STARTA FLASK
+# LÄS CONFIG
 # -------------------------------------------------
+
+def read_config():
+
+    with open(
+        CONFIG_FILE,
+        "r"
+    ) as f:
+
+        return json.load(f)
+
+
+# -------------------------------------------------
+# SPARA CONFIG
+# -------------------------------------------------
+
+def write_config(config):
+
+    with open(
+        CONFIG_FILE,
+        "w"
+    ) as f:
+
+        json.dump(
+            config,
+            f,
+            indent=4,
+            ensure_ascii=False
+        )
+
+
+# -------------------------------------------------
+# HÄMTA ÖLNAMN
+# -------------------------------------------------
+
+@app.route(
+    "/api/beer-name",
+    methods=["GET"]
+)
+def get_beer_name():
+
+    try:
+
+        config = read_config()
+
+
+        beer_name = config.get(
+            "beer_name",
+            ""
+        )
+
+
+        return jsonify({
+            "success": True,
+            "beer_name": beer_name
+        })
+
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# -------------------------------------------------
+# ÄNDRA ÖLNAMN
+# -------------------------------------------------
+
+@app.route(
+    "/api/beer-name",
+    methods=["POST"]
+)
+def set_beer_name():
+
+    try:
+
+        data = request.get_json()
+
+
+        if not data:
+
+            return jsonify({
+                "success": False,
+                "error": "Ingen data mottagen"
+            }), 400
+
+
+        beer_name = data.get(
+            "beer_name",
+            ""
+        ).strip()
+
+
+        if not beer_name:
+
+            return jsonify({
+                "success": False,
+                "error": "Ölnamnet får inte vara tomt"
+            }), 400
+
+
+        config = read_config()
+
+
+        config["beer_name"] = beer_name
+
+
+        write_config(
+            config
+        )
+
+
+        return jsonify({
+            "success": True,
+            "beer_name": beer_name,
+            "message": "Ölnamnet sparades"
+        })
+
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =================================================
+# START
+# =================================================
 
 if __name__ == "__main__":
 
@@ -163,10 +278,15 @@ if __name__ == "__main__":
     )
 
     print(
+        f"Config JSON:   {CONFIG_FILE}"
+    )
+
+    print(
         f"Control JSON:  {CONTROL_FILE}"
     )
 
     print()
+
 
     app.run(
         host="0.0.0.0",

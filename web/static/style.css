@@ -66,6 +66,113 @@ h1 {
 
 
 /* -------------------------------------------------
+   ÖLNAMN
+   ------------------------------------------------- */
+
+.beer-container {
+    background: white;
+
+    margin-bottom: 30px;
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+.beer-title {
+    font-size: 20px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+}
+
+
+.beer-name-row {
+    display: flex;
+
+    gap: 12px;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+
+#beer-name {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 12px 14px;
+
+    font-size: 22px;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    box-sizing: border-box;
+}
+
+
+#beer-name:focus {
+    outline: none;
+
+    border-color: #e5a000;
+}
+
+
+#beer-name-button {
+    padding: 12px 20px;
+
+    font-size: 18px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    background: #e5a000;
+
+    color: black;
+}
+
+
+#beer-name-button:hover {
+    opacity: 0.85;
+}
+
+
+#beer-name-button:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+#beer-name-message {
+    margin-top: 12px;
+
+    min-height: 20px;
+
+    font-size: 14px;
+
+    color: #666;
+}
+
+
+/* -------------------------------------------------
    KORT - VIKT / LITER / PROCENT
    ------------------------------------------------- */
 
@@ -259,6 +366,26 @@ h1 {
 
     h1 {
         font-size: 34px;
+    }
+
+
+    .beer-container {
+        padding: 20px;
+    }
+
+
+    .beer-name-row {
+        flex-direction: column;
+    }
+
+
+    #beer-name {
+        width: 100%;
+    }
+
+
+    #beer-name-button {
+        width: 100%;
     }
 
 

@@ -1,4 +1,21 @@
+# Python virtual environment
 myenv/
+.venv/
+venv/
+
+# Python cache
 __pycache__/
-*.py[cod]
-.lgd-nfy*
+*.pyc
+*.pyo
+
+# Runtime-filer som ändras när KegScale körs
+kegscale.json
+control.json
+
+# Editor / temporära filer
+*.swp
+*.tmp
+*~
+
+# Geany
+geany.log

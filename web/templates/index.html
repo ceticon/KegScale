@@ -35,6 +35,39 @@
 
 
         <!-- ---------------------------------
+             ÖLNAMN
+        ---------------------------------- -->
+
+        <div class="beer-container">
+
+            <div class="beer-title">
+                Öl i fatet
+            </div>
+
+            <div class="beer-name-row">
+
+                <input
+                    type="text"
+                    id="beer-name"
+                    placeholder="Ölets namn"
+                    maxlength="60"
+                >
+
+                <button
+                    id="beer-name-button"
+                    type="button">
+                    Spara namn
+                </button>
+
+            </div>
+
+            <div id="beer-name-message">
+            </div>
+
+        </div>
+
+
+        <!-- ---------------------------------
              VÄRDEN
         ---------------------------------- -->
 
@@ -105,8 +138,9 @@
 
             <div class="level-background">
 
-                <div id="level-bar"
-                     class="level-bar">
+                <div
+                    id="level-bar"
+                    class="level-bar">
                 </div>
 
             </div>
@@ -124,8 +158,9 @@
                 Vågen
             </div>
 
-            <button id="tare-button"
-                    type="button">
+            <button
+                id="tare-button"
+                type="button">
                 Nollställ våg
             </button>
 
@@ -139,8 +174,9 @@
              TIDSTÄMPEL
         ---------------------------------- -->
 
-        <div id="timestamp"
-             class="timestamp">
+        <div
+            id="timestamp"
+            class="timestamp">
             --
         </div>
 
@@ -151,7 +187,8 @@
          JAVASCRIPT
     ---------------------------------- -->
 
-    <script src="{{ url_for('static', filename='script.js') }}">
+    <script
+        src="{{ url_for('static', filename='script.js') }}">
     </script>
 
 </body>
