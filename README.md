@@ -15,7 +15,7 @@ På så sätt kan huvudsidan visas för andra utan risk att någon av misstag ä
 
 ## 🖥️ KegScale Main
 
-![KegScale web interface](docs/images/kegscale_webpage.png)
+![KegScale Main](docs/images/kegscale_main.png)
 
 Huvudsidan finns på:
 
@@ -41,6 +41,8 @@ Längst ner finns en diskret länk till inställningssidan.
 
 ## ⚙️ KegScale Setup
 
+![KegScale Setup](docs/images/kegscale_setup.png)
+
 Inställningssidan finns på:
 
 ```text
@@ -60,23 +62,8 @@ Den innehåller:
 
 Den aktuella vikten visas direkt på setup-sidan för att göra tareringen tydligare.
 
-Exempel:
-
-```text
-⚖️ Vågen
-
-Total vikt
-   4.53
-    kg
-
-[ Nollställ våg ]
-```
-
-Efter en lyckad tarering ska vågen visa ungefär:
-
-```text
-0.00 kg
-```
+> **Observera:** Ölnamn och nollställning av vågen är implementerade.  
+> Fatets tomvikt, volym och ölets densitet visas på Setup-sidan men ska kopplas till konfigurationen i ett kommande steg.
 
 ---
 
@@ -400,7 +387,8 @@ KegScale/
 ├── docs/
 │   └── images/
 │       ├── hx711.jpg
-│       └── kegscale_webpage.png
+│       ├── kegscale_main.png
+│       └── kegscale_setup.png
 ├── hardware/
 │   ├── KegScale_bb.pdf
 │   └── KegScale.fzz
@@ -418,14 +406,14 @@ KegScale/
         └── setup.html
 ```
 
-Runtime-filer:
+Runtime-filerna:
 
 ```text
 kegscale.json
 control.json
 ```
 
-kan exkluderas från Git via `.gitignore`.
+exkluderas från Git via `.gitignore`.
 
 ---
 
@@ -583,7 +571,7 @@ Exempel:
 
 KegScale är nu ett fungerande Raspberry Pi-baserat mätsystem med separat vågprocess och Flask-webbserver.
 
-Vågen är kalibrerad och testad. KegScale Main visar aktuell vikt, mängden öl och fatets fyllnadsgrad, medan KegScale Setup används för inställningar och tarering.
+Vågen är kalibrerad och testad. **KegScale Main** visar aktuell vikt, mängden öl och fatets fyllnadsgrad, medan **KegScale Setup** används för inställningar och tarering.
 
 Nästa utvecklingssteg är att göra fatets tomvikt, volym och ölets densitet fullt redigerbara från Setup-sidan.
 
