@@ -33,7 +33,7 @@ CONTROL_FILE = os.path.join(
 
 
 # -------------------------------------------------
-# HUVUDSIDA
+# WEBBSIDOR
 # -------------------------------------------------
 
 @app.route("/")
@@ -41,30 +41,30 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/setup")
+def setup():
+    return render_template("setup.html")
+
+
 # -------------------------------------------------
-# LÄS VIKT / KEG-SCALE DATA
+# API - VÅGDATA
 # -------------------------------------------------
 
 @app.route("/api/weight")
 def api_weight():
-
     try:
-
         with open(JSON_FILE, "r") as f:
             data = json.load(f)
-
 
         timestamp = datetime.strptime(
             data["timestamp"],
             "%Y-%m-%d %H:%M:%S"
         )
 
-
         age = (
             datetime.now()
             - timestamp
         ).total_seconds()
-
 
         data["online"] = (
             age < 5
@@ -75,12 +75,9 @@ def api_weight():
             1
         )
 
-
         return jsonify(data)
 
-
     except Exception as e:
-
         return jsonify({
             "error": str(e),
             "online": False
@@ -88,7 +85,7 @@ def api_weight():
 
 
 # -------------------------------------------------
-# TARERA VÅGEN
+# API - TARERING
 # -------------------------------------------------
 
 @app.route(
@@ -96,34 +93,27 @@ def api_weight():
     methods=["POST"]
 )
 def api_tare():
-
     try:
-
         control_data = {
             "tare": True
         }
-
 
         with open(
             CONTROL_FILE,
             "w"
         ) as f:
-
             json.dump(
                 control_data,
                 f,
                 indent=4
             )
 
-
         return jsonify({
             "success": True,
             "message": "Tarering begärd"
         })
 
-
     except Exception as e:
-
         return jsonify({
             "success": False,
             "error": str(e)
@@ -131,30 +121,22 @@ def api_tare():
 
 
 # -------------------------------------------------
-# LÄS CONFIG
+# CONFIG
 # -------------------------------------------------
 
 def read_config():
-
     with open(
         CONFIG_FILE,
         "r"
     ) as f:
-
         return json.load(f)
 
 
-# -------------------------------------------------
-# SPARA CONFIG
-# -------------------------------------------------
-
 def write_config(config):
-
     with open(
         CONFIG_FILE,
         "w"
     ) as f:
-
         json.dump(
             config,
             f,
@@ -164,7 +146,7 @@ def write_config(config):
 
 
 # -------------------------------------------------
-# HÄMTA ÖLNAMN
+# API - ÖLNAMN
 # -------------------------------------------------
 
 @app.route(
@@ -172,79 +154,58 @@ def write_config(config):
     methods=["GET"]
 )
 def get_beer_name():
-
     try:
-
         config = read_config()
-
 
         beer_name = config.get(
             "beer_name",
             ""
         )
 
-
         return jsonify({
             "success": True,
             "beer_name": beer_name
         })
 
-
     except Exception as e:
-
         return jsonify({
             "success": False,
             "error": str(e)
         }), 500
 
 
-# -------------------------------------------------
-# ÄNDRA ÖLNAMN
-# -------------------------------------------------
-
 @app.route(
     "/api/beer-name",
     methods=["POST"]
 )
 def set_beer_name():
-
     try:
-
         data = request.get_json()
 
-
         if not data:
-
             return jsonify({
                 "success": False,
                 "error": "Ingen data mottagen"
             }), 400
-
 
         beer_name = data.get(
             "beer_name",
             ""
         ).strip()
 
-
         if not beer_name:
-
             return jsonify({
                 "success": False,
                 "error": "Ölnamnet får inte vara tomt"
             }), 400
 
-
         config = read_config()
 
-
         config["beer_name"] = beer_name
-
 
         write_config(
             config
         )
-
 
         return jsonify({
             "success": True,
@@ -252,24 +213,21 @@ def set_beer_name():
             "message": "Ölnamnet sparades"
         })
 
-
     except Exception as e:
-
         return jsonify({
             "success": False,
             "error": str(e)
         }), 500
 
 
-# =================================================
-# START
-# =================================================
+# -------------------------------------------------
+# STARTA FLASK
+# -------------------------------------------------
 
 if __name__ == "__main__":
-
     print()
     print("------------------------------")
-    print(" Keg-Scale Web")
+    print(" KegScale Web")
     print("------------------------------")
     print()
 
@@ -286,7 +244,6 @@ if __name__ == "__main__":
     )
 
     print()
-
 
     app.run(
         host="0.0.0.0",

@@ -1,121 +1,272 @@
-// -------------------------------------------------
-// KEG-SCALE WEB
-// -------------------------------------------------
+// =================================================
+// KEGSCALE WEB
+// =================================================
 
 
 // -------------------------------------------------
-// HÄMTA OCH VISA DATA
+// UPPDATERA KEGSCALE-DATA
 // -------------------------------------------------
 
 async function updateKegScale() {
+
     try {
-        const response = await fetch("/api/weight");
-        const data = await response.json();
 
-        const status = document.getElementById("status");
-        const weight = document.getElementById("weight");
-        const liters = document.getElementById("liters");
-        const percent = document.getElementById("percent");
-        const levelBar = document.getElementById("level-bar");
-        const timestamp = document.getElementById("timestamp");
+        const response =
+            await fetch("/api/weight");
 
-        // Fel från Flask
+        const data =
+            await response.json();
+
+
+        // Element finns framför allt på index.html
+
+        const status =
+            document.getElementById("status");
+
+        const beerDisplayName =
+            document.getElementById(
+                "beer-display-name"
+            );
+
+        const weight =
+            document.getElementById("weight");
+
+        const liters =
+            document.getElementById("liters");
+
+        const percent =
+            document.getElementById("percent");
+
+        const levelBar =
+            document.getElementById("level-bar");
+
+        const timestamp =
+            document.getElementById("timestamp");
+
+
+        // -----------------------------------------
+        // FEL VID LÄSNING
+        // -----------------------------------------
+
         if (data.error) {
-            status.textContent = "Fel vid läsning av Keg-Scale";
-            status.className = "status offline";
+
+            if (status) {
+                status.textContent =
+                    "Fel vid läsning av KegScale";
+
+                status.className =
+                    "status offline";
+            }
+
             return;
         }
 
-        // Keg-Scale är inte aktiv
+
+        // -----------------------------------------
+        // KEGSCALE OFFLINE
+        // -----------------------------------------
+
         if (!data.online) {
-            status.textContent = "Keg-Scale är inte aktiv";
-            status.className = "status offline";
 
-            weight.textContent = "--";
-            liters.textContent = "--";
-            percent.textContent = "--";
+            if (status) {
+                status.textContent =
+                    "KegScale är inte aktiv";
 
-            levelBar.style.width = "0%";
+                status.className =
+                    "status offline";
+            }
 
-            timestamp.textContent =
-                "Senaste data: " + data.timestamp;
+            if (weight) {
+                weight.textContent = "--";
+            }
+
+            if (liters) {
+                liters.textContent = "--";
+            }
+
+            if (percent) {
+                percent.textContent = "--";
+            }
+
+            if (levelBar) {
+                levelBar.style.width = "0%";
+            }
+
+            if (beerDisplayName) {
+                beerDisplayName.textContent =
+                    data.beer_name || "--";
+            }
+
+            if (timestamp) {
+                timestamp.textContent =
+                    "Senaste data: "
+                    + data.timestamp;
+            }
 
             return;
         }
 
-        // Keg-Scale är online
-        status.textContent = "Keg-Scale online";
-        status.className = "status online";
 
-        // Visa värden
-        weight.textContent =
-            Number(data.weight_kg).toFixed(2);
+        // -----------------------------------------
+        // KEGSCALE ONLINE
+        // -----------------------------------------
 
-        liters.textContent =
-            Number(data.beer_liters).toFixed(1);
+        if (status) {
 
-        percent.textContent =
-            Number(data.fill_percent).toFixed(1);
+            status.textContent =
+                "KegScale online";
+
+            status.className =
+                "status online";
+        }
+
+
+        // Ölets namn
+
+        if (beerDisplayName) {
+
+            beerDisplayName.textContent =
+                data.beer_name || "--";
+        }
+
+
+        // Total vikt
+
+        if (weight) {
+
+            weight.textContent =
+                Number(
+                    data.weight_kg
+                ).toFixed(2);
+        }
+
+
+        // Liter öl
+
+        if (liters) {
+
+            liters.textContent =
+                Number(
+                    data.beer_liters
+                ).toFixed(1);
+        }
+
+
+        // Fyllnadsgrad
+
+        if (percent) {
+
+            percent.textContent =
+                Number(
+                    data.fill_percent
+                ).toFixed(1);
+        }
+
 
         // Nivåindikator
-        let level = Number(data.fill_percent);
 
-        if (level < 0) {
-            level = 0;
+        if (levelBar) {
+
+            let level =
+                Number(
+                    data.fill_percent
+                );
+
+            if (level < 0) {
+                level = 0;
+            }
+
+            if (level > 100) {
+                level = 100;
+            }
+
+            levelBar.style.width =
+                level + "%";
         }
 
-        if (level > 100) {
-            level = 100;
-        }
-
-        levelBar.style.width = level + "%";
 
         // Tidstämpel
-        timestamp.textContent =
-            "Senast uppdaterad: " + data.timestamp;
+
+        if (timestamp) {
+
+            timestamp.textContent =
+                "Senast uppdaterad: "
+                + data.timestamp;
+        }
+
     }
 
     catch (error) {
-        console.error("Fel vid hämtning:", error);
 
-        const status = document.getElementById("status");
+        console.error(
+            "Fel vid hämtning:",
+            error
+        );
+
+        const status =
+            document.getElementById(
+                "status"
+            );
 
         if (status) {
-            status.textContent = "Ingen kontakt med servern";
-            status.className = "status offline";
+
+            status.textContent =
+                "Ingen kontakt med servern";
+
+            status.className =
+                "status offline";
         }
     }
 }
 
 
 // -------------------------------------------------
-// HÄMTA ÖLNAMN
+// LÄS ÖLNAMN
 // -------------------------------------------------
 
 async function loadBeerName() {
+
+    const beerNameInput =
+        document.getElementById(
+            "beer-name"
+        );
+
+    // Finns endast på setup.html
+
+    if (!beerNameInput) {
+        return;
+    }
+
+
     try {
-        const response = await fetch("/api/beer-name");
-        const data = await response.json();
 
-        const beerNameInput =
-            document.getElementById("beer-name");
+        const response =
+            await fetch(
+                "/api/beer-name"
+            );
 
-        if (!beerNameInput) {
-            return;
-        }
+        const data =
+            await response.json();
+
 
         if (data.success) {
-            beerNameInput.value = data.beer_name;
+
+            beerNameInput.value =
+                data.beer_name;
         }
+
         else {
+
             console.error(
                 "Kunde inte läsa ölnamn:",
                 data.error
             );
         }
+
     }
 
     catch (error) {
+
         console.error(
             "Fel vid hämtning av ölnamn:",
             error
@@ -129,55 +280,88 @@ async function loadBeerName() {
 // -------------------------------------------------
 
 async function saveBeerName() {
+
     const input =
-        document.getElementById("beer-name");
+        document.getElementById(
+            "beer-name"
+        );
 
     const button =
-        document.getElementById("beer-name-button");
+        document.getElementById(
+            "beer-name-button"
+        );
 
     const message =
-        document.getElementById("beer-name-message");
+        document.getElementById(
+            "beer-name-message"
+        );
 
-    const beerName = input.value.trim();
 
-    if (beerName === "") {
-        message.textContent =
-            "Ölnamnet får inte vara tomt.";
+    if (!input || !button || !message) {
         return;
     }
 
+
+    const beerName =
+        input.value.trim();
+
+
+    if (beerName === "") {
+
+        message.textContent =
+            "Ölnamnet får inte vara tomt.";
+
+        return;
+    }
+
+
     button.disabled = true;
-    message.textContent = "Sparar...";
+
+    message.textContent =
+        "Sparar...";
+
 
     try {
-        const response = await fetch(
-            "/api/beer-name",
-            {
-                method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+        const response =
+            await fetch(
+                "/api/beer-name",
+                {
+                    method: "POST",
 
-                body: JSON.stringify({
-                    beer_name: beerName
-                })
-            }
-        );
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-        const data = await response.json();
+                    body: JSON.stringify({
+                        beer_name:
+                            beerName
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
 
         if (data.success) {
+
             message.textContent =
                 "Ölnamnet sparades.";
         }
+
         else {
+
             message.textContent =
                 "Kunde inte spara ölnamnet.";
         }
+
     }
 
     catch (error) {
+
         console.error(
             "Fel vid sparning av ölnamn:",
             error
@@ -187,10 +371,17 @@ async function saveBeerName() {
             "Ingen kontakt med servern.";
     }
 
-    setTimeout(function () {
-        button.disabled = false;
-        message.textContent = "";
-    }, 3000);
+
+    setTimeout(
+        function () {
+
+            button.disabled = false;
+
+            message.textContent = "";
+
+        },
+        3000
+    );
 }
 
 
@@ -199,38 +390,60 @@ async function saveBeerName() {
 // -------------------------------------------------
 
 async function tareScale() {
+
     const button =
-        document.getElementById("tare-button");
+        document.getElementById(
+            "tare-button"
+        );
 
     const message =
-        document.getElementById("tare-message");
+        document.getElementById(
+            "tare-message"
+        );
+
+
+    if (!button || !message) {
+        return;
+    }
+
 
     button.disabled = true;
+
     message.textContent =
         "Nollställer vågen...";
 
+
     try {
-        const response = await fetch(
-            "/api/tare",
-            {
-                method: "POST"
-            }
-        );
+
+        const response =
+            await fetch(
+                "/api/tare",
+                {
+                    method: "POST"
+                }
+            );
+
 
         const data =
             await response.json();
 
+
         if (data.success) {
+
             message.textContent =
                 "Tarering begärd...";
         }
+
         else {
+
             message.textContent =
                 "Tareringen misslyckades.";
         }
+
     }
 
     catch (error) {
+
         console.error(
             "Fel vid tarering:",
             error
@@ -240,23 +453,31 @@ async function tareScale() {
             "Ingen kontakt med servern.";
     }
 
-    setTimeout(function () {
-        button.disabled = false;
-        message.textContent = "";
-    }, 3000);
+
+    setTimeout(
+        function () {
+
+            button.disabled = false;
+
+            message.textContent = "";
+
+        },
+        3000
+    );
 }
 
 
-// -------------------------------------------------
-// START NÄR SIDAN ÄR FÄRDIGLADDAD
-// -------------------------------------------------
+// =================================================
+// SIDAN ÄR LADDAD
+// =================================================
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
 
+
         // -----------------------------------------
-        // ÖLNAMN
+        // SPARA ÖLNAMN
         // -----------------------------------------
 
         const beerNameButton =
@@ -265,6 +486,7 @@ document.addEventListener(
             );
 
         if (beerNameButton) {
+
             beerNameButton.addEventListener(
                 "click",
                 saveBeerName
@@ -272,18 +494,23 @@ document.addEventListener(
         }
 
 
-        // Spara även med Enter
+        // Enter i ölnamnsfältet
+
         const beerNameInput =
             document.getElementById(
                 "beer-name"
             );
 
         if (beerNameInput) {
+
             beerNameInput.addEventListener(
                 "keydown",
                 function (event) {
 
-                    if (event.key === "Enter") {
+                    if (
+                        event.key === "Enter"
+                    ) {
+
                         saveBeerName();
                     }
                 }
@@ -301,6 +528,7 @@ document.addEventListener(
             );
 
         if (tareButton) {
+
             tareButton.addEventListener(
                 "click",
                 tareScale
@@ -309,16 +537,20 @@ document.addEventListener(
 
 
         // -----------------------------------------
-        // STARTA DATAUPPDATERING
+        // START
         // -----------------------------------------
 
         loadBeerName();
 
         updateKegScale();
 
+
+        // Uppdatera vågdata varje sekund
+
         setInterval(
             updateKegScale,
             1000
         );
+
     }
 );

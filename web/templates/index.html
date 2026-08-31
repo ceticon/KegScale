@@ -7,36 +7,30 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Keg-Scale</title>
+    <title>KegScale Main</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-
 <body>
 
     <div class="container">
 
-        <!-- ---------------------------------
+        <!-- =========================================
              RUBRIK
-        ---------------------------------- -->
+             ========================================= -->
 
-        <h1>🍺 Keg-Scale</h1>
-
-
-        <!-- ---------------------------------
-             STATUS
-        ---------------------------------- -->
+        <h1>🍺 KegScale</h1>
 
         <div id="status" class="status">
             Väntar på data...
         </div>
 
 
-        <!-- ---------------------------------
-             ÖLNAMN
-        ---------------------------------- -->
+        <!-- =========================================
+             ÖL
+             ========================================= -->
 
         <div class="beer-container">
 
@@ -44,34 +38,22 @@
                 Öl i fatet
             </div>
 
-            <div class="beer-name-row">
-
-                <input
-                    type="text"
-                    id="beer-name"
-                    placeholder="Ölets namn"
-                    maxlength="60"
-                >
-
-                <button
-                    id="beer-name-button"
-                    type="button">
-                    Spara namn
-                </button>
-
-            </div>
-
-            <div id="beer-name-message">
+            <div
+                id="beer-display-name"
+                class="beer-display-name">
+                --
             </div>
 
         </div>
 
 
-        <!-- ---------------------------------
-             VÄRDEN
-        ---------------------------------- -->
+        <!-- =========================================
+             VIKT / VOLYM / FYLLNADSGRAD
+             ========================================= -->
 
         <div class="cards">
+
+            <!-- TOTAL VIKT -->
 
             <div class="card">
 
@@ -79,7 +61,9 @@
                     Total vikt
                 </div>
 
-                <div id="weight" class="value">
+                <div
+                    id="weight"
+                    class="value">
                     --
                 </div>
 
@@ -90,13 +74,17 @@
             </div>
 
 
+            <!-- ÖL KVAR -->
+
             <div class="card">
 
                 <div class="label">
                     Öl kvar
                 </div>
 
-                <div id="liters" class="value">
+                <div
+                    id="liters"
+                    class="value">
                     --
                 </div>
 
@@ -107,13 +95,17 @@
             </div>
 
 
+            <!-- FYLLNADSGRAD -->
+
             <div class="card">
 
                 <div class="label">
                     Fyllnadsgrad
                 </div>
 
-                <div id="percent" class="value">
+                <div
+                    id="percent"
+                    class="value">
                     --
                 </div>
 
@@ -126,9 +118,9 @@
         </div>
 
 
-        <!-- ---------------------------------
-             NIVÅINDIKATOR
-        ---------------------------------- -->
+        <!-- =========================================
+             FATNIVÅ
+             ========================================= -->
 
         <div class="level-container">
 
@@ -148,31 +140,9 @@
         </div>
 
 
-        <!-- ---------------------------------
-             TARERING
-        ---------------------------------- -->
-
-        <div class="tare-container">
-
-            <div class="level-title">
-                Vågen
-            </div>
-
-            <button
-                id="tare-button"
-                type="button">
-                Nollställ våg
-            </button>
-
-            <div id="tare-message">
-            </div>
-
-        </div>
-
-
-        <!-- ---------------------------------
-             TIDSTÄMPEL
-        ---------------------------------- -->
+        <!-- =========================================
+             SENASTE UPPDATERING
+             ========================================= -->
 
         <div
             id="timestamp"
@@ -180,12 +150,25 @@
             --
         </div>
 
+
+        <!-- =========================================
+             INSTÄLLNINGAR
+             ========================================= -->
+
+        <div class="setup-back">
+
+            <a href="/setup">
+                ⚙️ Inställningar
+            </a>
+
+        </div>
+
     </div>
 
 
-    <!-- ---------------------------------
+    <!-- =============================================
          JAVASCRIPT
-    ---------------------------------- -->
+         ============================================= -->
 
     <script
         src="{{ url_for('static', filename='script.js') }}">

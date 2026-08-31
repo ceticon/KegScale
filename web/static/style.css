@@ -1,81 +1,55 @@
 /* =================================================
-   KEG-SCALE
+   KEGSCALE
    ================================================= */
-
-
-/* -------------------------------------------------
-   GRUNDSIDA
-   ------------------------------------------------- */
 
 body {
     font-family: Arial, sans-serif;
-
     background: #f2f2f2;
-
     margin: 0;
     padding: 0;
 }
 
-
-/* -------------------------------------------------
-   HUVUDCONTAINER
-   ------------------------------------------------- */
-
 .container {
     max-width: 800px;
-
     margin: 50px auto;
-
     padding: 20px;
-
     text-align: center;
 }
 
-
-/* -------------------------------------------------
-   RUBRIK
-   ------------------------------------------------- */
-
 h1 {
     font-size: 42px;
-
     margin-top: 0;
     margin-bottom: 10px;
 }
 
 
-/* -------------------------------------------------
+/* =================================================
    STATUS
-   ------------------------------------------------- */
+   ================================================= */
 
 .status {
     font-size: 18px;
-
     margin-bottom: 30px;
 }
-
 
 .status.online {
     color: green;
 }
-
 
 .status.offline {
     color: red;
 }
 
 
-/* -------------------------------------------------
-   ÖLNAMN
-   ------------------------------------------------- */
+/* =================================================
+   GEMENSAMMA KORT
+   ================================================= */
 
-.beer-container {
+.beer-container,
+.level-container,
+.tare-container {
     background: white;
-
-    margin-bottom: 30px;
-
     padding: 25px;
-
     border-radius: 15px;
 
     box-shadow:
@@ -83,107 +57,141 @@ h1 {
         rgba(0, 0, 0, 0.12);
 }
 
+.beer-container {
+    margin-bottom: 30px;
+}
+
+.level-container {
+    margin-top: 30px;
+}
+
+.tare-container {
+    margin-top: 30px;
+}
+
+
+/* =================================================
+   ÖLNAMN - VISNING PÅ HUVUDSIDAN
+   ================================================= */
 
 .beer-title {
+    font-size: 17px;
+    font-weight: normal;
+
+    color: #666;
+
+    margin-bottom: 10px;
+}
+
+.beer-display-name {
+    font-size: 32px;
+    font-weight: 700;
+
+    text-align: center;
+
+    color: #333;
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+
+/* =================================================
+   RUBRIKER I ÖVRIGA KORT
+   ================================================= */
+
+.level-title {
     font-size: 20px;
-
     font-weight: bold;
-
     margin-bottom: 15px;
 }
 
 
+/* =================================================
+   ÖLNAMN - INSTÄLLNINGSSIDA
+   ================================================= */
+
 .beer-name-row {
     display: flex;
-
     gap: 12px;
-
     justify-content: center;
-
     align-items: center;
 }
 
-
 #beer-name {
-    flex: 1;
+    display: block;
 
-    min-width: 0;
+    width: 100%;
+    max-width: 500px;
+
+    margin-left: auto;
+    margin-right: auto;
 
     padding: 12px 14px;
 
     font-size: 22px;
-
     font-weight: 600;
 
     text-align: center;
 
     border: 1px solid #ccc;
-
     border-radius: 8px;
 
     box-sizing: border-box;
 }
 
-
 #beer-name:focus {
     outline: none;
-
     border-color: #e5a000;
 }
 
-
 #beer-name-button {
+    display: block;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+
     padding: 12px 20px;
 
     font-size: 18px;
 
     border: none;
-
     border-radius: 8px;
 
     cursor: pointer;
 
     background: #e5a000;
-
     color: black;
 }
-
 
 #beer-name-button:hover {
     opacity: 0.85;
 }
 
-
 #beer-name-button:disabled {
     opacity: 0.5;
-
     cursor: not-allowed;
 }
 
-
 #beer-name-message {
     margin-top: 12px;
-
     min-height: 20px;
 
     font-size: 14px;
-
     color: #666;
 }
 
 
-/* -------------------------------------------------
-   KORT - VIKT / LITER / PROCENT
-   ------------------------------------------------- */
+/* =================================================
+   KORT PÅ HUVUDSIDAN
+   ================================================= */
 
 .cards {
     display: flex;
-
     gap: 20px;
-
     justify-content: center;
 }
-
 
 .card {
     flex: 1;
@@ -199,57 +207,26 @@ h1 {
         rgba(0, 0, 0, 0.12);
 }
 
-
 .label {
     font-size: 18px;
-
     margin-bottom: 15px;
 }
 
-
 .value {
     font-size: 46px;
-
     font-weight: bold;
 }
 
-
 .unit {
     font-size: 18px;
-
     margin-top: 5px;
-
     color: #666;
 }
 
 
-/* -------------------------------------------------
+/* =================================================
    NIVÅINDIKATOR
-   ------------------------------------------------- */
-
-.level-container {
-    background: white;
-
-    margin-top: 30px;
-
-    padding: 25px;
-
-    border-radius: 15px;
-
-    box-shadow:
-        0 4px 15px
-        rgba(0, 0, 0, 0.12);
-}
-
-
-.level-title {
-    font-size: 20px;
-
-    font-weight: bold;
-
-    margin-bottom: 15px;
-}
-
+   ================================================= */
 
 .level-background {
     width: 100%;
@@ -262,7 +239,6 @@ h1 {
 
     overflow: hidden;
 }
-
 
 .level-bar {
     width: 0%;
@@ -277,24 +253,9 @@ h1 {
 }
 
 
-/* -------------------------------------------------
+/* =================================================
    TARERING
-   ------------------------------------------------- */
-
-.tare-container {
-    background: white;
-
-    margin-top: 30px;
-
-    padding: 25px;
-
-    border-radius: 15px;
-
-    box-shadow:
-        0 4px 15px
-        rgba(0, 0, 0, 0.12);
-}
-
+   ================================================= */
 
 #tare-button {
     padding: 12px 25px;
@@ -302,28 +263,22 @@ h1 {
     font-size: 18px;
 
     border: none;
-
     border-radius: 8px;
 
     cursor: pointer;
 
     background: #e5a000;
-
     color: black;
 }
-
 
 #tare-button:hover {
     opacity: 0.85;
 }
 
-
 #tare-button:disabled {
     opacity: 0.5;
-
     cursor: not-allowed;
 }
-
 
 #tare-message {
     margin-top: 12px;
@@ -336,85 +291,215 @@ h1 {
 }
 
 
+/* =================================================
+   SETUP-SIDA
+   ================================================= */
+
+.setup-field {
+    max-width: 500px;
+
+    margin:
+        0 auto
+        25px auto;
+
+    text-align: left;
+}
+
+.setup-field label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 17px;
+
+    font-weight: 600;
+}
+
+
 /* -------------------------------------------------
-   TIDSTÄMPEL
+   INPUT + ENHET
    ------------------------------------------------- */
+
+.setup-input-unit {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.setup-input-unit input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 12px 14px;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    text-align: center;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    box-sizing: border-box;
+}
+
+.setup-input-unit input:focus {
+    outline: none;
+    border-color: #e5a000;
+}
+
+.setup-input-unit span {
+    min-width: 55px;
+
+    font-size: 17px;
+
+    color: #666;
+
+    text-align: left;
+}
+
+
+/* -------------------------------------------------
+   BESKRIVNING
+   ------------------------------------------------- */
+
+.setup-description {
+    margin:
+        0 auto
+        20px auto;
+
+    font-size: 16px;
+
+    color: #666;
+}
+
+
+/* -------------------------------------------------
+   TILLBAKA / INSTÄLLNINGAR
+   ------------------------------------------------- */
+
+.setup-back {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.setup-back a {
+    color: #555;
+
+    font-size: 17px;
+
+    text-decoration: none;
+}
+
+.setup-back a:hover {
+    text-decoration: underline;
+}
+
+
+/* =================================================
+   TIDSTÄMPEL
+   ================================================= */
 
 .timestamp {
     margin-top: 25px;
-
     margin-bottom: 20px;
 
     font-size: 14px;
 
     color: #777;
 }
+/* =================================================
+   VIKTVISNING PÅ SETUP-SIDAN
+   ================================================= */
 
+.setup-weight {
+    margin-top: 10px;
+    margin-bottom: 25px;
+}
 
-/* -------------------------------------------------
-   MOBIL / SMÅ SKÄRMAR
-   ------------------------------------------------- */
+.setup-weight-label {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.setup-weight-value {
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.setup-weight-unit {
+    margin-top: 3px;
+    font-size: 17px;
+    color: #666;
+}
+
+/* =================================================
+   MOBIL
+   ================================================= */
 
 @media (max-width: 600px) {
 
     .container {
         margin: 20px auto;
-
         padding: 15px;
     }
-
 
     h1 {
         font-size: 34px;
     }
 
-
-    .beer-container {
+    .beer-container,
+    .level-container,
+    .tare-container {
         padding: 20px;
     }
 
+    .beer-display-name {
+        font-size: 28px;
+    }
 
     .beer-name-row {
         flex-direction: column;
     }
 
-
     #beer-name {
         width: 100%;
+        max-width: none;
     }
-
 
     #beer-name-button {
         width: 100%;
     }
 
-
     .cards {
         flex-direction: column;
     }
-
 
     .card {
         padding: 20px 15px;
     }
 
-
     .value {
         font-size: 40px;
     }
 
-
-    .level-container {
-        padding: 20px;
-    }
-
-
-    .tare-container {
-        padding: 20px;
-    }
-
-
     #tare-button {
         width: 100%;
+    }
+
+    .setup-field {
+        max-width: none;
+    }
+
+    .setup-input-unit {
+        gap: 8px;
+    }
+
+    .setup-input-unit input {
+        font-size: 18px;
     }
 }

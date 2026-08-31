@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>KegScale Setup</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- =========================================
+             RUBRIK
+             ========================================= -->
+
+        <h1>⚙️ KegScale</h1>
+
+        <div class="status">
+            Inställningar
+        </div>
+
+
+        <!-- =========================================
+             ÖL
+             ========================================= -->
+
+        <div class="beer-container">
+
+            <div class="level-title">
+                🍺 Öl
+            </div>
+
+            <div class="setup-field">
+
+                <label for="beer-name">
+                    Ölets namn
+                </label>
+
+                <input
+                    type="text"
+                    id="beer-name"
+                    placeholder="Ölets namn"
+                    maxlength="60"
+                >
+
+            </div>
+
+            <button
+                id="beer-name-button"
+                type="button">
+                Spara namn
+            </button>
+
+            <div id="beer-name-message">
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             FAT
+             ========================================= -->
+
+        <div class="beer-container">
+
+            <div class="level-title">
+                🛢️ Fat
+            </div>
+
+
+            <!-- FATETS TOMVIKT -->
+
+            <div class="setup-field">
+
+                <label for="keg-tare">
+                    Fatets tomvikt
+                </label>
+
+                <div class="setup-input-unit">
+
+                    <input
+                        type="number"
+                        id="keg-tare"
+                        step="0.01"
+                        min="0"
+                        placeholder="4.50"
+                    >
+
+                    <span>
+                        kg
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- FATETS VOLYM -->
+
+            <div class="setup-field">
+
+                <label for="keg-capacity">
+                    Fatets volym
+                </label>
+
+                <div class="setup-input-unit">
+
+                    <input
+                        type="number"
+                        id="keg-capacity"
+                        step="0.1"
+                        min="0"
+                        placeholder="19.0"
+                    >
+
+                    <span>
+                        liter
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             BERÄKNING
+             ========================================= -->
+
+        <div class="beer-container">
+
+            <div class="level-title">
+                🧮 Beräkning
+            </div>
+
+            <div class="setup-field">
+
+                <label for="beer-density">
+                    Ölets densitet
+                </label>
+
+                <div class="setup-input-unit">
+
+                    <input
+                        type="number"
+                        id="beer-density"
+                        step="0.001"
+                        min="0"
+                        placeholder="1.010"
+                    >
+
+                    <span>
+                        kg/l
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             VÅG
+             ========================================= -->
+
+        <div class="tare-container">
+
+            <div class="level-title">
+                ⚖️ Vågen
+            </div>
+
+
+            <!-- AKTUELL VIKT -->
+
+            <div class="setup-weight">
+
+                <div class="setup-weight-label">
+                    Total vikt
+                </div>
+
+                <div
+                    id="weight"
+                    class="setup-weight-value">
+                    --
+                </div>
+
+                <div class="setup-weight-unit">
+                    kg
+                </div>
+
+            </div>
+
+
+            <!-- TARERING -->
+
+            <p class="setup-description">
+                Nollställ vågen när plattformen är tom.
+            </p>
+
+            <button
+                id="tare-button"
+                type="button">
+                Nollställ våg
+            </button>
+
+            <div id="tare-message">
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             TILLBAKA
+             ========================================= -->
+
+        <div class="setup-back">
+
+            <a href="/">
+                ← Tillbaka till KegScale
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =============================================
+         JAVASCRIPT
+         ============================================= -->
+
+    <script
+        src="{{ url_for('static', filename='script.js') }}">
+    </script>
+
+</body>
+
+</html>
